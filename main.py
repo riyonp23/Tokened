@@ -5,7 +5,7 @@ from signup import signUpPage
 from student import student
 
 # Database Link
-cluster = MongoClient("mongodb+srv://riyon:123@tokened.urunqhy.mongodb.net/?retryWrites=true&w=majority")
+cluster = MongoClient("mongodb+srv://riyon:<password>@tokened.urunqhy.mongodb.net/?retryWrites=true&w=majority")
 db = cluster["Tokened"]
 collection = db["userInfo"]
 
