@@ -3,9 +3,10 @@ import customtkinter as ctk
 from login import loginPage
 from signup import signUpPage
 from student import student
+import env
 
 # Database Link
-cluster = MongoClient("mongodb+srv://riyon:<password>@tokened.urunqhy.mongodb.net/?retryWrites=true&w=majority")
+cluster = MongoClient(env.dbLink)
 db = cluster["Tokened"]
 collection = db["userInfo"]
 
@@ -18,6 +19,8 @@ class App(ctk.CTk):
         self.title("Tokened")
         self.geometry("800x500")
         self.resizable(False, False)
+        self.iconbitmap(env.img[5])
+        self.update_idletasks()
 
         container = ctk.CTkFrame(self, height=800, width=500)
 
