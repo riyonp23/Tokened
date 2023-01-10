@@ -1,6 +1,5 @@
 import customtkinter as ctk
 from PIL import Image
-
 import env
 
 
@@ -8,6 +7,15 @@ def show_frame(self, page):
     frame = self.frames[page]
     # raises the current frame to the top
     frame.tkraise()
+
+
+welcomeLabel = None
+
+
+def changeText():
+    from login import first_name
+    global welcomeLabel
+    welcomeLabel.configure(text="Welcome, " + first_name)
 
 
 openm = False
@@ -33,7 +41,10 @@ def menuClose(self):
 
 class student(ctk.CTkFrame):
     def __init__(self, parent, controller):
+        global welcomeLabel
         ctk.CTkFrame.__init__(self, parent)
+        welcomeLabel = ctk.CTkLabel(self, text="")
+        welcomeLabel.place(relx=0.5, rely=0.5)
         self.settingFrame = ctk.CTkCanvas(self, width=150, height=500, background="#212121", highlightthickness=0,
                                           borderwidth=0)
 
@@ -45,13 +56,3 @@ class student(ctk.CTkFrame):
         self.menuButton = ctk.CTkButton(self, image=self.menuImage, text="", width=15, height=25, fg_color="#292929",
                                         hover_color="#212121", command=lambda: menuOpen(self))
         self.menuButton.place(relx=0.955)
-
-
-def userInfo(self):
-    window = ctk.CTkToplevel(self)
-    window.geometry("200x400")
-    window.title("Tokened - Student Info")
-    window.resizable(False, False)
-
-    label = ctk.CTkLabel(window, text="CTkToplevel window")
-    label.pack(side="top", fill="both", expand=True, padx=40, pady=40)

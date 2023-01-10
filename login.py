@@ -7,7 +7,6 @@ import ssl
 import smtplib
 import secrets
 import string
-import keyboard
 import env
 
 
@@ -16,11 +15,17 @@ def show_frame(self, controller, page):
     # raises the current frame to the top
     frame.tkraise()
     self.emailEntry.delete(0, ctk.END)
+    self.emailEntry.configure(placeholder_text="email")
     self.passwordEntry.delete(0, ctk.END)
+    self.passwordEntry.configure(placeholder_text="password")
     self.passwordEntry.configure(show="\u2022")
     self.errorMessage.configure(text="")
 
 
+first_name = ""
+last_name = ""
+grade = ""
+school = ""
 email = ""
 password = ""
 regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'  # To check for valid email
@@ -90,6 +95,20 @@ def forgotPassword(self):
     window.restButton.place(relx=0.27, rely=0.68)
 
 
+def obtainUserinfo():
+    from main import collection
+    from student import changeText
+    global first_name, last_name, grade, school, email
+    get = {"email": email}
+    user = collection.find_one(get)
+    first_name = user['first_name']
+    last_name = user['last_name']
+    grade = user['grade']
+    school = user['school']
+    print(email, first_name, last_name, grade, school)
+    changeText()
+
+
 def loginSuccess(self, controller):
     from main import collection
     from student import student
@@ -109,7 +128,7 @@ def loginSuccess(self, controller):
     password = str(password2)
     get = {"email": email2, "password": password2}
     if not collection.find_one(get) is None:
-        keyboard.remove_all_hotkeys()
+        obtainUserinfo()
         show_frame(self, controller, student)
         return
     else:
@@ -146,6 +165,4 @@ class loginPage(ctk.CTkFrame):
         self.signButton = ctk.CTkButton(self, text="Sign Up", width=190, height=30,
                                         command=lambda: show_frame(self, controller, signUpPage))
         self.signButton.place(relx=0.385, rely=0.7)
-
-        keyboard.add_hotkey('enter', lambda: loginSuccess(self, controller))
 
