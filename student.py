@@ -20,7 +20,6 @@ def changeText():
 
 openm = False
 
-
 def menuOpen(self):
     global openm
     if not openm:
@@ -32,6 +31,7 @@ def menuOpen(self):
         menuClose(self)
         openm = False
         return
+
 
 
 def menuClose(self):
@@ -57,8 +57,27 @@ class student(ctk.CTkFrame):
                                         hover_color="#212121", command=lambda: menuOpen(self))
         self.menuButton.place(relx=0.935, rely=0.025)
 
-        self.plusImage = ctk.CTkImage(dark_image=Image.open(env.img[8]),
-                                      light_image=Image.open(env.img[8]), size=(75, 75))
-        self.addButton = ctk.CTkButton(self, image=self.plusImage, text="Add Event",width=15, height=50, fg_color="#292929",
-                                        hover_color="#212121", font=("", 24))
-        self.addButton.place(relx=0.1, rely=0.3)
+        self.plusImage = ctk.CTkImage(dark_image=Image.open(env.img[10]),
+                                      light_image=Image.open(env.img[10]), size=(75, 75))
+        self.eventsButton = ctk.CTkButton(self, image=self.plusImage, text="Events", width=15, height=50, fg_color="#292929",
+                                        hover_color="#212121", font=("courier new", 24), border_width=2, border_spacing=20)
+        self.eventsButton.place(relx=0.1, rely=0.2)
+
+        self.leaderboard = ctk.CTkLabel(self, text="Name\t\tGrade\t\tPoints", font=("courier new", 18), text_color="white")
+        self.leaderboard.place(relx=0.45, rely=0.2)
+
+        from main import collection
+        lbStudentName = []
+        for i in collection.find().sort("points", -1):
+            lbStudentName.append(str(i['first_name'] + "  " + i["last_name"]))
+        print(lbStudentName)
+
+        var_holder = {}
+        place_holder = {}
+        counter = 0.1
+        for i in range(len(lbStudentName)):
+                place_holder['num' + str(i)] = ctk.CTkLabel(self, text=str(i + 1) + '.').place(relx=0.05, rely=counter)
+                var_holder['myvar' + str(i)] = ctk.CTkLabel(self, text=lbStudentName[i]).place(relx=0.12, rely=counter)
+                counter = counter + 0.11
+                print(counter)
+

@@ -11,6 +11,7 @@ db = cluster["Tokened"]
 collection = db["userInfo"]
 
 
+
 class App(ctk.CTk):
     def __init__(self, *args, **kwargs):
         ctk.CTk.__init__(self, *args, **kwargs)
