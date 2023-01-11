@@ -70,7 +70,6 @@ class student(ctk.CTkFrame):
         lbStudentName = []
         for i in collection.find().sort("points", -1):
             lbStudentName.append(str(i['first_name'] + "  " + i["last_name"]))
-        print(lbStudentName)
 
         var_holder = {}
         place_holder = {}
@@ -79,5 +78,4 @@ class student(ctk.CTkFrame):
                 place_holder['num' + str(i)] = ctk.CTkLabel(self, text=str(i + 1) + '.').place(relx=0.05, rely=counter)
                 var_holder['myvar' + str(i)] = ctk.CTkLabel(self, text=lbStudentName[i]).place(relx=0.12, rely=counter)
                 counter = counter + 0.11
-                print(counter)
 
