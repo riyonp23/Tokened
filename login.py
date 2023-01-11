@@ -105,7 +105,6 @@ def obtainUserinfo():
     last_name = user['last_name']
     grade = user['grade']
     school = user['school']
-    print(email, first_name, last_name, grade, school)
     changeText()
 
 
