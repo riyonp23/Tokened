@@ -43,7 +43,7 @@ class student(ctk.CTkFrame):
     def __init__(self, parent, controller):
         global welcomeLabel
         ctk.CTkFrame.__init__(self, parent)
-        welcomeLabel = ctk.CTkLabel(self, text="Welcome, Iggy.", font=("courier new", 34))
+        welcomeLabel = ctk.CTkLabel(self, text="Welcome, Iggy", font=("", 26))
         welcomeLabel.place(relx=0.055, rely=0.025)
         self.settingFrame = ctk.CTkCanvas(self, width=150, height=300, background="#212121", highlightthickness=0,
                                           borderwidth=0)
@@ -64,11 +64,10 @@ class student(ctk.CTkFrame):
                                           border_width=2, border_spacing=20)
         self.eventsButton.place(relx=0.05, rely=0.2)
 
-        self.lbTitle = ctk.CTkLabel(self, text="Leaderboard", font=("Courier New", 28)).place(relx=0.55, rely=0.15)
+        self.lbTitle = ctk.CTkLabel(self, text="Leaderboard", font=("Courier New", 28)).place(relx=0.55, rely=0.1)
 
-        self.lbHeadings = ctk.CTkLabel(self, text="Name\t" + "      " + "Grade" + "    " + "Points",
-                                       font=("courier new", 22))
-        self.lbHeadings.place(relx=0.45, rely=0.25)
+        self.lbHeadings = ctk.CTkLabel(self, text="Name\t" + "      " + "Grade" + "    " + "Points", font=("courier new", 22))
+        self.lbHeadings.place(relx=0.45, rely=0.2)
 
         from main import collection
         lbStudentName = []
@@ -78,10 +77,10 @@ class student(ctk.CTkFrame):
 
         var_holder = {}
         place_holder = {}
-        counter = 0.325
+        counter = 0.275
         for i in range(len(lbStudentName)):
             place_holder['num' + str(i)] = ctk.CTkLabel(self, text=str(i+1) + '.', font=("courier new", 18),
-                                                        text_color="white").place(relx=0.38, rely=counter)
+                                                        text_color="white").place(relx=0.4, rely=counter)
             var_holder['myvar' + str(i)] = ctk.CTkLabel(self, text=lbStudentName[i],
                                                         font=("courier new", 16)).place(relx=0.44, rely=counter)
             counter = counter + 0.09

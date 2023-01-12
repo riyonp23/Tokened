@@ -39,7 +39,7 @@ class App(ctk.CTk):
             frame.grid(row=0, column=0, sticky="nsew")
 
         # Starts on Login Page
-        self.show_frame(loginPage)
+        self.show_frame(student)
 
     def show_frame(self, cont):
         frame = self.frames[cont]
