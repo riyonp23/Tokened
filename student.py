@@ -66,7 +66,8 @@ class student(ctk.CTkFrame):
 
         self.lbTitle = ctk.CTkLabel(self, text="Leaderboard", font=("Courier New", 28)).place(relx=0.55, rely=0.1)
 
-        self.lbHeadings = ctk.CTkLabel(self, text="Name\t" + "      " + "Grade" + "    " + "Points", font=("courier new", 22))
+        self.lbHeadings = ctk.CTkLabel(self, text="Name\t" + "      " + "Grade" + "    " + "Points",
+                                       font=("courier new", 22))
         self.lbHeadings.place(relx=0.45, rely=0.2)
 
         from main import collection
