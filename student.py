@@ -59,29 +59,23 @@ class student(ctk.CTkFrame):
 
         self.plusImage = ctk.CTkImage(dark_image=Image.open(env.img[10]),
                                       light_image=Image.open(env.img[10]), size=(75, 75))
-        self.eventsButton = ctk.CTkButton(self, image=self.plusImage, text="Events", width=15, height=50,
-                                          fg_color="#292929", hover_color="#212121", font=("courier new", 24),
-                                          border_width=2, border_spacing=20)
-        self.eventsButton.place(relx=0.05, rely=0.2)
+        self.eventsButton = ctk.CTkButton(self, image=self.plusImage, text="Events", width=15, height=50, fg_color="#292929",
+                                        hover_color="#212121", font=("courier new", 24), border_width=2, border_spacing=20)
+        self.eventsButton.place(relx=0.1, rely=0.2)
 
-        self.lbTitle = ctk.CTkLabel(self, text="Leaderboard", font=("Courier New", 28)).place(relx=0.55, rely=0.1)
-
-        self.lbHeadings = ctk.CTkLabel(self, text="Name\t" + "      " + "Grade" + "    " + "Points", font=("courier new", 22))
-        self.lbHeadings.place(relx=0.45, rely=0.2)
+        self.leaderboard = ctk.CTkLabel(self, text="Name\t\tGrade\t\tPoints", font=("courier new", 18), text_color="white")
+        self.leaderboard.place(relx=0.45, rely=0.2)
 
         from main import collection
         lbStudentName = []
         for i in collection.find().sort("points", -1):
-            lbStudentName.append(str(i['first_name'] + " " + i["last_name"]))
-        print(lbStudentName)
+            lbStudentName.append(str(i['first_name'] + "  " + i["last_name"]))
 
         var_holder = {}
         place_holder = {}
-        counter = 0.275
+        counter = 0.1
         for i in range(len(lbStudentName)):
-            place_holder['num' + str(i)] = ctk.CTkLabel(self, text=str(i+1) + '.', font=("courier new", 18),
-                                                        text_color="white").place(relx=0.4, rely=counter)
-            var_holder['myvar' + str(i)] = ctk.CTkLabel(self, text=lbStudentName[i],
-                                                        font=("courier new", 16)).place(relx=0.44, rely=counter)
-            counter = counter + 0.09
+                place_holder['num' + str(i)] = ctk.CTkLabel(self, text=str(i + 1) + '.').place(relx=0.05, rely=counter)
+                var_holder['myvar' + str(i)] = ctk.CTkLabel(self, text=lbStudentName[i]).place(relx=0.12, rely=counter)
+                counter = counter + 0.11
 
