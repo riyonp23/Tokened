@@ -15,7 +15,6 @@ def show_frame(self, controller, page):
     # raises the current frame to the top
     frame.tkraise()
     self.emailEntry.delete(0, ctk.END)
-    self.emailEntry.configure(placeholder_text="email")
     self.passwordEntry.delete(0, ctk.END)
     self.passwordEntry.configure(placeholder_text="password")
     self.passwordEntry.configure(show="\u2022")
@@ -64,7 +63,7 @@ def resetPassword(window):
         context = ssl.create_default_context()
 
         with smtplib.SMTP_SSL('smtp.gmail.com', 465, context=context) as smtp:
-            smtp.login("riyonpraveen23@gmail.com", "")
+            smtp.login("riyonpraveen23@gmail.com", "jqvwgalspzpbrofy")
             smtp.sendmail("riyonpraveen23@gmail.com", str(resemail), em.as_string())
 
         collection.update_one({"email": resemail}, {"$set": {"password": pwd}})
@@ -83,11 +82,11 @@ def forgotPassword(self):
     window.title("Tokened - Forgot Password")
     window.resizable(False, False)
     window.grab_set()
-    window.iconbitmap(env.img[5])
+    window.iconbitmap(env.img[2])
 
-    window.title = ctk.CTkLabel(window, text="Reset Password", font=("Garamond", 20)).place(relx=0.36)
-    window.info = ctk.CTkLabel(window, text="ⓘ Enter The Email Associated With Your Account", font=("Garamond", 14))
-    window.info.place(relx=0.15, rely=0.52)
+    window.title = ctk.CTkLabel(window, text="Reset Password", font=("courier new", 18)).place(relx=0.31)
+    window.info = ctk.CTkLabel(window, text="ⓘ Enter The Email Associated With Your Account", font=("courier new", 12))
+    window.info.place(relx=0.13, rely=0.52)
     window.emailEntry = ctk.CTkEntry(window, placeholder_text="email", width=200)
     window.emailEntry.place(relx=0.26, rely=0.4)
 
@@ -110,7 +109,7 @@ def obtainUserinfo():
 
 def loginSuccess(self, controller):
     from main import collection
-    from student import student
+    from student import student, updatelb, updatepoints
     global email, password
     self.errorMessage.place(relx=0.44)
     if self.emailEntry.get() == "" or self.passwordEntry.get() == "":
@@ -128,6 +127,8 @@ def loginSuccess(self, controller):
     get = {"email": email2, "password": password2}
     if not collection.find_one(get) is None:
         obtainUserinfo()
+        updatelb()
+        updatepoints()
         show_frame(self, controller, student)
         return
     else:
@@ -141,7 +142,7 @@ class loginPage(ctk.CTkFrame):
     def __init__(self, parent, controller):
         ctk.CTkFrame.__init__(self, parent)
 
-        self.mainImage = ctk.CTkImage(dark_image=Image.open(env.img[6]), light_image=Image.open(env.img[6]), size=(350, 350))
+        self.mainImage = ctk.CTkImage(dark_image=Image.open(env.img[3]), light_image=Image.open(env.img[3]), size=(350, 350))
         self.imageLabel = ctk.CTkLabel(self, image=self.mainImage, text="")
         self.imageLabel.place(relx=0.288, rely=-0.15)
 

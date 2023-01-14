@@ -3,13 +3,14 @@ import customtkinter as ctk
 from login import loginPage
 from signup import signUpPage
 from student import student
+from addEvent import eventPage
 import env
 
 # Database Link
 cluster = MongoClient(env.dbLink)
 db = cluster["Tokened"]
 collection = db["userInfo"]
-
+events = db["events"]
 
 
 class App(ctk.CTk):
@@ -20,7 +21,7 @@ class App(ctk.CTk):
         self.title("Tokened")
         self.geometry("800x500")
         self.resizable(False, False)
-        self.iconbitmap(env.img[5])
+        self.iconbitmap(env.img[2])
         self.update_idletasks()
 
         container = ctk.CTkFrame(self, height=800, width=500)
@@ -32,14 +33,14 @@ class App(ctk.CTk):
 
         self.frames = {}
 
-        for F in (loginPage, signUpPage, student): # Add new pages here
+        for F in (loginPage, signUpPage, student, eventPage):  # Add new pages here
             frame = F(container, self)
 
             self.frames[F] = frame
             frame.grid(row=0, column=0, sticky="nsew")
 
         # Starts on Login Page
-        self.show_frame(student)
+        self.show_frame(loginPage)
 
     def show_frame(self, cont):
         frame = self.frames[cont]
@@ -47,6 +48,6 @@ class App(ctk.CTk):
         frame.tkraise()
 
 
-if __name__ == "__main__": # Runs the window
+if __name__ == "__main__":  # Runs the window
     app = App()
     app.mainloop()
