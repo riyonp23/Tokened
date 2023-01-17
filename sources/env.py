@@ -1,4 +1,4 @@
-dbLink = "mongodb+srv://riyon:123@tokened.urunqhy.mongodb.net/?retryWrites=true&w=majority"
+dbLink = "password"
 
 img = ["./assets/back.png", "./assets/forgot.png", "./assets/tokened.ico", "./assets/tokened-main.png", "./assets/plus.png", "./assets/logout.png", "./assets/menu.png", "./assets/events.png", "./assets/points.png", "./assets/cancel.png", "./assets/report.png", "./assets/help.png"]
 
