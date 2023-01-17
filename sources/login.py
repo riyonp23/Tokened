@@ -1,18 +1,20 @@
-import customtkinter as ctk
 import re
-from signup import signUpPage
-from PIL import Image
-from email.message import EmailMessage
-import ssl
-import smtplib
 import secrets
+import smtplib
+import ssl
 import string
+from email.message import EmailMessage
+
+import customtkinter as ctk
+from PIL import Image
+
 import env
+from signup import signUpPage
 
 
+# shows the login page
 def show_frame(self, controller, page):
     frame = controller.frames[page]
-    # raises the current frame to the top
     frame.tkraise()
     self.emailEntry.delete(0, ctk.END)
     self.passwordEntry.delete(0, ctk.END)
@@ -21,15 +23,18 @@ def show_frame(self, controller, page):
     self.errorMessage.configure(text="")
 
 
+# initializes all variables
 first_name = ""
 last_name = ""
 grade = ""
 school = ""
-email = "riyonpraveen23@gmail.com"
+email = ""
 password = ""
 regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'  # To check for valid email
 
 
+# allows users to reset password
+# composes email to reset
 def resetPassword(window):
     from main import collection
     if window.emailEntry.get() == "":
@@ -75,6 +80,7 @@ def resetPassword(window):
         return
 
 
+# creates forgot password window to enter email.
 def forgotPassword(self):
     window = ctk.CTkToplevel(self)
     window.geometry("400x200")
@@ -93,6 +99,7 @@ def forgotPassword(self):
     window.restButton.place(relx=0.27, rely=0.68)
 
 
+# uses email to obtain information for the account
 def obtainUserinfo():
     from main import collection
     from student import changeText
@@ -111,9 +118,11 @@ def loginSuccess(self, controller):
     from student import student, updatelb, updatepoints, updateupcoming
     global email, password
     self.errorMessage.place(relx=0.44)
+    # error message if all text fields are not filled
     if self.emailEntry.get() == "" or self.passwordEntry.get() == "":
         self.errorMessage.configure(text="Error: Fill All Fields")
         return
+    # error message if email is not a valid email
     if not re.fullmatch(regex, self.emailEntry.get()):
         self.passwordEntry.delete(0, ctk.END)
         self.errorMessage.configure(text="Error: Invalid Email")
@@ -124,6 +133,7 @@ def loginSuccess(self, controller):
     email = str(email2)
     password = str(password2)
     get = {"email": email2, "password": password2}
+    # obtains user info if login is succesful
     if not collection.find_one(get) is None:
         obtainUserinfo()
         updatelb()
@@ -131,6 +141,7 @@ def loginSuccess(self, controller):
         updateupcoming()
         show_frame(self, controller, student)
         return
+    # error message if password or email is incorrect
     else:
         self.passwordEntry.delete(0, ctk.END)
         self.errorMessage.configure(text="Error: Email & Password is Incorrect")
@@ -138,28 +149,38 @@ def loginSuccess(self, controller):
         return
 
 
+# initializes frame and places widgets on the window
 class loginPage(ctk.CTkFrame):
     def __init__(self, parent, controller):
         ctk.CTkFrame.__init__(self, parent)
 
-        self.mainImage = ctk.CTkImage(dark_image=Image.open(env.img[3]), light_image=Image.open(env.img[3]), size=(350, 350))
+        # displays logo
+        self.mainImage = ctk.CTkImage(dark_image=Image.open(env.img[3]), light_image=Image.open(env.img[3]),
+                                      size=(350, 350))
         self.imageLabel = ctk.CTkLabel(self, image=self.mainImage, text="")
         self.imageLabel.place(relx=0.288, rely=-0.15)
 
+        # places email and password text entry fields
         self.emailEntry = ctk.CTkEntry(self, placeholder_text="email", width=200)
         self.emailEntry.place(relx=0.38, rely=0.38)
 
         self.passwordEntry = ctk.CTkEntry(self, placeholder_text="password", width=200, show="\u2022")
         self.passwordEntry.place(relx=0.38, rely=0.48)
 
+        #  places error message
         self.errorMessage = ctk.CTkLabel(self, text="", text_color="red")
         self.errorMessage.place(relx=0.44, rely=0.54)
 
-        self.forgotPassIcon = ctk.CTkImage(dark_image=Image.open(env.img[1]), light_image=Image.open(env.img[1]), size=(18, 18))
-        self.forgotPassButton = ctk.CTkButton(self, image=self.forgotPassIcon, width=18, height=18, text="", fg_color="#292929", hover_color="#212121", command=lambda: forgotPassword(self))
+        # places forgot password button, login button, and sign-up button
+        self.forgotPassIcon = ctk.CTkImage(dark_image=Image.open(env.img[1]), light_image=Image.open(env.img[1]),
+                                           size=(18, 18))
+        self.forgotPassButton = ctk.CTkButton(self, image=self.forgotPassIcon, width=18, height=18, text="",
+                                              fg_color="#292929", hover_color="#212121",
+                                              command=lambda: forgotPassword(self))
         self.forgotPassButton.place(relx=0.63, rely=0.485)
 
-        self.loginButton = ctk.CTkButton(self, text="Login", width=190, height=30, command=lambda: loginSuccess(self, controller))
+        self.loginButton = ctk.CTkButton(self, text="Login", width=190, height=30,
+                                         command=lambda: loginSuccess(self, controller))
         self.loginButton.place(relx=0.385, rely=0.6)
 
         self.signButton = ctk.CTkButton(self, text="Sign Up", width=190, height=30,

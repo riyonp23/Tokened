@@ -1,9 +1,12 @@
-import customtkinter as ctk
 import re
+
+import customtkinter as ctk
 from PIL import Image
+
 import env
 
 
+# function to switch page to login screen and clears all entries
 def show_frame(self, controller):
     from login import loginPage
     frame = controller.frames[loginPage]
@@ -25,11 +28,13 @@ def show_frame(self, controller):
     self.errorMessage.configure(text="")
 
 
+# function to create new user account and stores it in the database mongoDB
 def createAccount(self, controller):
     from main import collection
     from student import updatelb
     regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'  # To check for valid email
     self.errorMessage.place(relx=0.44)
+    # Error messages response
     if self.emailEntry.get() == "" or self.passwordEntry.get() == "" or self.conpasswordEntry.get() == "" or self.schoolbox.get() == "school" or self.fnameEntry.get() == "" or self.lnameEntry.get() == "" or self.gradebox.get() == "grade":
         self.errorMessage.configure(text="Error: Fill All Fields")
         return
@@ -43,33 +48,37 @@ def createAccount(self, controller):
         self.conpasswordEntry.delete(0, ctk.END)
         return
     self.errorMessage.configure(text="")
-    fName = self.fnameEntry.get()
-    lName = self.lnameEntry.get()
-    grade = self.gradebox.get()
-    email = self.emailEntry.get()
-    password = self.conpasswordEntry.get()
-    school = self.schoolbox.get()
-    if collection.find_one({"email": email}):
+    fName = self.fnameEntry.get()  # Gets user input from first name box
+    lName = self.lnameEntry.get()  # Gets user input from last name box
+    grade = self.gradebox.get()  # Gets user input from grade box
+    email = self.emailEntry.get()  # Gets user input from email  box
+    password = self.conpasswordEntry.get()  # Gets user input from password box
+    school = self.schoolbox.get()  # Gets user input from school box
+    if collection.find_one({"email": email}):  # checks to see if email is already in use in the database
         self.errorMessage.configure(text="Error: Email Already Inuse")
         self.errorMessage.place(relx=0.42)
         self.passwordEntry.delete(0, ctk.END)
         self.conpasswordEntry.delete(0, ctk.END)
         return
+    # Clear entries upon completion
     self.emailEntry.delete(0, ctk.END)
     self.passwordEntry.delete(0, ctk.END)
     self.conpasswordEntry.delete(0, ctk.END)
     self.schoolbox.set("schools")
-    info = {"first_name": fName, "last_name": lName, "grade": grade, "email": email, "password": password, "school": school, "points": 0}
-    collection.insert_one(info)
+    info = {"first_name": fName, "last_name": lName, "grade": grade, "email": email, "password": password,
+            "school": school, "points": 0}  # Takes all the info and stores it in a dictionary
+    collection.insert_one(info)  # Inserts the new user into the database
     updatelb()
-    show_frame(self, controller)
+    show_frame(self, controller)  # Switches to login page
 
 
+# initializes frame and places widgets on the page
 class signUpPage(ctk.CTkFrame):
     def __init__(self, parent, controller):
         ctk.CTkFrame.__init__(self, parent)
 
-        self.mainImage = ctk.CTkImage(dark_image=Image.open(env.img[3]), light_image=Image.open(env.img[3]), size=(350, 350))
+        self.mainImage = ctk.CTkImage(dark_image=Image.open(env.img[3]), light_image=Image.open(env.img[3]),
+                                      size=(350, 350))
         self.imageLabel = ctk.CTkLabel(self, image=self.mainImage, text="")
         self.imageLabel.place(relx=0.288, rely=-0.22)
 

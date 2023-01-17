@@ -1,38 +1,37 @@
 from datetime import datetime, date
+
 import customtkinter as ctk
 from PIL import Image
+
 import env
 from help import helpPage
 
 
-# add help button to menu
-# add help screen
-
-
+# function to switch pages
 def show_frame(self, controller, page):
     frame = controller.frames[page]
-    # raises the current frame to the top
     menuClose(self, True)
     frame.tkraise()
 
 
-welcomeLabel = None
-
-
+# function to change welcome label to the student's first name
 def changeText():
     from login import first_name
     global welcomeLabel
     welcomeLabel.configure(text="Welcome, " + first_name)
 
 
+# function to switch to event page
 def toaddEvents(self, controller):
     from addEvent import eventPage, updateevents
     updateevents()
     show_frame(self, controller, eventPage)
 
 
+# initializing variables to be used later
 frame = None
 pointsLabel = None
+welcomeLabel = None
 pointsFrame = None
 upcomingEventsFrame = None
 errorImage = None
@@ -45,30 +44,34 @@ event_holder = {}
 eventdate_holder = {}
 
 
+# function to update the leaderboard
 def updatelb():
     from main import collection
     from login import school
     global frame, name_holder, grade_holder, points_holder
-    lbStudentName = []
-    lbStudentGrade = []
-    lbStudentPoints = []
-    for i in collection.find({'school': school}).sort('points', -1):
+    lbStudentName = []  # initializes list for student names
+    lbStudentGrade = []  # initializes list for student grades
+    lbStudentPoints = []  # initializes list for student points
+    for i in collection.find({'school': school}).sort('points',
+                                                      -1):  # sorts all the students in the same school by points
+        # Adds the items to list
         lbStudentName.append(str(i['first_name'] + " " + i["last_name"]))
         lbStudentGrade.append(str(i["grade"]))
         lbStudentPoints.append(str(i["points"]))
 
+    #
     lenevent = 0
     if len(lbStudentName) < 5:
         lenevent = len(lbStudentName)
     else:
         lenevent = 5
     counter = 0.3
-    for i in range(len(name_holder)):
+    for i in range(len(name_holder)):  # if the name,grade, or email is already created, deletes it
         if len(name_holder) > 0:
             name_holder['name' + str(i)].destroy()
             grade_holder['grade' + str(i)].destroy()
             points_holder['pointsum' + str(i)].destroy()
-    for i in range(lenevent):
+    for i in range(lenevent):  # creates the labels for every student in the lists
         name_holder['name' + str(i)] = ctk.CTkLabel(frame, text=lbStudentName[i])
         name_holder['name' + str(i)].place(relx=0.45, rely=counter)
         grade_holder["grade" + str(i)] = ctk.CTkLabel(frame, text=lbStudentGrade[i])
@@ -78,27 +81,28 @@ def updatelb():
         counter = counter + 0.08
 
 
+# function to update the upcoming events
 def updateupcoming():
     from main import events
     from login import email
     global upcomingEventsFrame, event_holder, eventdate_holder, eventbd_holder, errorImage
-    eventname = []
-    eventdate = []
-    for i in events.find({'email': email}).sort('sortdate', -1):
+    eventname = []  # initializes list for event name
+    eventdate = []  # initializes list for event date
+    for i in events.find({'email': email}).sort('sortdate', -1):  # sorts all events by date
         eventname.append(i['event'])
         eventdate.append(i['date'])
-    currentdate = date.today().strftime("%m/%d/%Y")
+    currentdate = date.today().strftime("%m/%d/%Y")  # gets today's date
     eventdate.append(currentdate)
-    eventdate.sort(key=lambda date: datetime.strptime(date, "%m/%d/%Y"), reverse=True)
+    eventdate.sort(key=lambda date: datetime.strptime(date, "%m/%d/%Y"), reverse=True)  # resorts the dates
     index = eventdate.index(currentdate)
     eventname.insert(index, 'space')
-    for i in range(len(eventdate)):
+    for i in range(len(eventdate)):  # Remove dates that already pasted today's date
         if index < i:
             eventdate.pop()
     for i in range(len(eventname)):
         if index < i:
             eventname.pop()
-    eventdate.remove(currentdate)
+    eventdate.remove(currentdate)  # Removes today's date
     eventname.remove('space')
     lenevent = 0
     if len(eventdate) < 3:
@@ -107,13 +111,13 @@ def updateupcoming():
         lenevent = 3
     counter = 0.08
     counter2 = 0.23
-    for i in range(len(event_holder)):
+    for i in range(len(event_holder)):  # if the event name,event date, or border is already created, deletes it
         if len(event_holder) > 0:
             event_holder['event' + str(i)].destroy()
             eventdate_holder['date' + str(i)].destroy()
             eventbd_holder['bd' + str(i)].destroy()
-    if lenevent == 0:
-        for i in range(3):
+    if lenevent == 0:  # if there is no upcoming events
+        for i in range(3):  # creates upcoming events
             eventbd_holder['bd' + str(i)] = ctk.CTkFrame(upcomingEventsFrame, width=200, height=90,
                                                          bg_color="transparent", fg_color="transparent", border_width=2,
                                                          border_color="#292929")
@@ -128,7 +132,7 @@ def updateupcoming():
             eventdate_holder['date' + str(i)].place(relx=1)
             counter = counter + 0.3
         return
-    for i in range(lenevent):
+    for i in range(lenevent):  # creates upcoming events
         eventbd_holder['bd' + str(i)] = ctk.CTkFrame(upcomingEventsFrame, width=200, height=90, bg_color="transparent",
                                                      fg_color="transparent", border_width=2, border_color="#292929")
         eventbd_holder['bd' + str(i)].place(relx=counter, rely=0.3)
@@ -140,29 +144,31 @@ def updateupcoming():
                                                          font=("Courier New", 14), bg_color="transparent",
                                                          fg_color="transparent")
         eventdate_holder['date' + str(i)].place(x=58, rely=0.46)
-        if lenevent == 1:
+        if lenevent == 1:  # if there is only one upcoming event, creates only one upcoming event border
             eventbd_holder['bd' + str(i)].place(relx=0.38, rely=0.3)
-        elif lenevent == 2:
+        elif lenevent == 2:  # if there is two upcoming event, creates two upcoming event borders
             eventbd_holder['bd' + str(i)].place(relx=counter2, rely=0.3)
             counter2 = counter2 + 0.3
         counter = counter + 0.3
 
 
+# function to update the points
 def updatepoints():
     from main import collection
     from login import email
     global pointsLabel, pointsFrame
-    user = collection.find_one({'email': email})
-    points = user['points']
+    user = collection.find_one({'email': email})  # finds the user from the datebase based on email
+    points = user['points']  # sets the user points to the variable points
     if points >= 1000:
         pointsFrame.configure(width=105)
     elif points >= 100:
         pointsFrame.configure(width=80)
     elif points == 0:
         pointsFrame.configure(width=55)
-    pointsLabel.configure(text=points)
+    pointsLabel.configure(text=points)  # sets points
 
 
+# function to switch to report page
 def reportPage(self, controller):
     from report import winners, reportPage, updateUserinfo
     updateUserinfo()
@@ -170,6 +176,7 @@ def reportPage(self, controller):
     show_frame(self, controller, reportPage)
 
 
+# function to change password
 def changepass(self):
     from main import collection
     from login import email
@@ -180,25 +187,28 @@ def changepass(self):
     if self.newpassEntry.get() != self.newconpassEntry.get():
         self.errorMessage.place(relx=0)
         return self.errorMessage.configure(text="Error: Passwords Don't Match", font=("", 11))
-    user = collection.find_one({"email": email})
-    ogpass = user['password']
+    user = collection.find_one({"email": email})  # finds the user from the database from their email
+    ogpass = user['password']  # finds the user password from the datebase
     if not self.ogpassEntry.get() == ogpass:
         self.errorMessage.place(relx=0.07)
         return self.errorMessage.configure(text="Error: Invalid Password")
     self.errorMessage.configure(text="Successfully Reset Password", text_color="green", font=("", 11))
     self.errorMessage.place(relx=0)
-    collection.find_one_and_update({'email': email}, {'$set': {"password": self.newconpassEntry.get()}})
-    self.ogpassEntry.delete(0, ctk.END)
+    collection.find_one_and_update({'email': email},
+                                   {'$set': {"password": self.newconpassEntry.get()}})  # sets new password to datebase
+    self.ogpassEntry.delete(0, ctk.END)  # deletes entry
     self.newpassEntry.delete(0, ctk.END)
     self.newconpassEntry.delete(0, ctk.END)
 
 
+# function to logout and go back to the login screen
 def logout(self, controller, para1):
     from login import loginPage
     show_frame(self, controller, loginPage)
     menuClose(self, para1)
 
 
+# function to open the menu and close
 def menuOpen(self, para1):
     global openm
     if not openm:
@@ -217,6 +227,7 @@ def menuOpen(self, para1):
         return
 
 
+# function to close the menu and clear entries
 def menuClose(self, para1):
     self.settingFrame.place(relx=1)
     self.ogpassEntry.delete(0, ctk.END)
@@ -236,6 +247,7 @@ def menuClose(self, para1):
         self.logoutButton.configure(fg_color="#212121", hover_color="2929292", bg_color="#212121")
 
 
+# initializes frame and places widgets on the page
 class student(ctk.CTkFrame):
     def __init__(self, parent, controller):
         global welcomeLabel, frame, pointsLabel, pointsFrame, upcomingEventsFrame, errorImage

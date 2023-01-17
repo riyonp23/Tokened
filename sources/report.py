@@ -1,10 +1,12 @@
-import customtkinter as ctk
-import random
-from PIL import Image
-import env
 import os
-from student import menuOpen, changepass, logout
+import random
+
+import customtkinter as ctk
+from PIL import Image
+
+import env
 from help import helpPage
+from student import menuOpen, changepass, logout
 
 
 def show_frame(self, controller, page):  # used to switch to next frame
@@ -69,6 +71,7 @@ def winners():
     rewardLabel.configure(text="Reward: " + reward)
 
 
+# creates function for text file to show name and points for all students
 def reportAll():
     from main import collection
     from login import school
@@ -93,6 +96,7 @@ def reportAll():
         pass
 
 
+# creates function to show the position of the student within his school
 def updateUserinfo():
     from main import collection
     from login import email, first_name, last_name, grade, school
@@ -127,6 +131,8 @@ class reportPage(ctk.CTkFrame):  # sets frame for report page
         self.bdtitle = ctk.CTkLabel(self.bd, text="Student Report", font=("courier new", 22))
         self.bdtitle.place(relx=0.27, rely=0.05)
 
+        # places name, grade, points, and class position
+
         nameLabel = ctk.CTkLabel(self.bd, text="Name:", font=("courier new", 20))
         nameLabel.place(relx=0.05, rely=0.2)
         gradeLabel = ctk.CTkLabel(self.bd, text="Grade:", font=("courier new", 20))
@@ -155,12 +161,14 @@ class reportPage(ctk.CTkFrame):  # sets frame for report page
         self.report.place(relx=alignx, rely=0.83)
         self.report.bind("<Button-1>", lambda e: reportAll())
 
+        # places back button to return to dashboard
         self.backIcon = ctk.CTkImage(dark_image=Image.open(env.img[0]), light_image=Image.open(env.img[0]),
                                      size=(25, 25))
         self.backButton = ctk.CTkButton(self, image=self.backIcon, text="", fg_color="#292929", height=25, width=25,
                                         hover_color="#212121", command=lambda: show_frame(self, controller, student))
         self.backButton.place(relx=0, rely=0)
-        # runs function
+
+        # configures settings menu
         self.settingFrame = ctk.CTkCanvas(self, width=160, height=500, background="#212121", highlightthickness=0,
                                           borderwidth=0)
 
@@ -184,6 +192,7 @@ class reportPage(ctk.CTkFrame):  # sets frame for report page
                                         bg_color="#212121", hover_color="#292929", command=lambda: changepass(self))
         self.saveButton.place(relx=0.34, rely=0.52)
 
+        # places help button and log out button within settings menu frame
         self.helpImage = ctk.CTkImage(dark_image=Image.open(env.img[11]), light_image=Image.open(env.img[11]),
                                       size=(20, 20))
         self.helpButton = ctk.CTkButton(self.settingFrame, image=self.helpImage, text="", width=25, height=25,
