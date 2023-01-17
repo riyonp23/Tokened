@@ -62,7 +62,7 @@ def resetPassword(window):
         context = ssl.create_default_context()
 
         with smtplib.SMTP_SSL('smtp.gmail.com', 465, context=context) as smtp:
-            smtp.login("riyonpraveen23@gmail.com", "jqvwgalspzpbrofy")
+            smtp.login("riyonpraveen23@gmail.com", "password")
             smtp.sendmail("riyonpraveen23@gmail.com", str(resemail), em.as_string())
 
         collection.update_one({"email": resemail}, {"$set": {"password": pwd}})
