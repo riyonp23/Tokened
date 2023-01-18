@@ -1,5 +1,3 @@
-<img src="https://github.com/skyy-rad/Tokened/blob/main/assets/tokened-main.png" alt="drawing" width="200"/>
-
 # Tokened
 Developers: [Riyon Praveen](https://github.com/skyy-rad), [Ignatius Martin](https://github.com/iggym21), & [Anay Patel](https://github.com/Perefo)
 
@@ -16,3 +14,6 @@ Developers: [Riyon Praveen](https://github.com/skyy-rad), [Ignatius Martin](http
 
 ## Source Code
 Coded In [Python 3.10.1](https://github.com/skyy-rad/Tokened/tree/main/sources) (1000 Lines Of Code)
+
+<img src="https://github.com/skyy-rad/Tokened/blob/main/assets/tokened-main.png" alt="drawing" width="200"/>
+
