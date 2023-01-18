@@ -1,4 +1,4 @@
-<img src="https://github.com/skyy-rad/Tokened/blob/main/assets/tokened-main.png" alt="drawing" width="1000" height="500"/>
+<img src="https://github.com/skyy-rad/Tokened/blob/main/assets/tokened-main.png" alt="drawing" width="1000" height="300"/>
 
 # Tokened
 Developers: [Riyon Praveen](https://github.com/skyy-rad), [Ignatius Martin](https://github.com/iggym21), & [Anay Patel](https://github.com/Perefo)
