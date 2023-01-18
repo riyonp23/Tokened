@@ -1,4 +1,4 @@
-<img src="https://i.ibb.co/mSWzchF/tokened-main-removebg-preview.png" alt="drawing" width="1000"/>
+<img src="https://i.ibb.co/mSWzchF/tokened-main-removebg-preview.png" alt="drawing" width="500"/>
 
 # Tokened
 Developers: [Riyon Praveen](https://github.com/skyy-rad), [Ignatius Martin](https://github.com/iggym21), & [Anay Patel](https://github.com/Perefo)
