@@ -13,4 +13,4 @@ Developers: [Riyon Praveen](https://github.com/skyy-rad), [Ignatius Martin](http
 * **RAM:** 2 GB
 
 ## Source Code
-Coded In [Python 3.10.1](https://github.com/skyy-rad/Tokened/tree/main/sources) (1000 Lines Of Code)
+Coded In [Python 3.10.1](https://github.com/skyy-rad/Tokened/tree/main/sources) (2000 Lines Of Code)
