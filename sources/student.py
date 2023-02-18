@@ -4,6 +4,7 @@ import customtkinter as ctk
 from PIL import Image
 
 import env
+from account import accountPage
 from help import helpPage
 
 
@@ -23,8 +24,10 @@ def changeText():
 
 # function to switch to event page
 def toaddEvents(self, controller):
-    from addEvent import eventPage, updateevents
+    from addEvent import eventPage, updateevents, eventdropdown, updateeventdropdown
     updateevents()
+    eventdropdown()
+    updateeventdropdown()
     show_frame(self, controller, eventPage)
 
 
@@ -46,14 +49,14 @@ eventdate_holder = {}
 
 # function to update the leaderboard
 def updatelb():
-    from main import collection
+    from main import student
     from login import school
     global frame, name_holder, grade_holder, points_holder
     lbStudentName = []  # initializes list for student names
     lbStudentGrade = []  # initializes list for student grades
     lbStudentPoints = []  # initializes list for student points
-    for i in collection.find({'school': school}).sort('points',
-                                                      -1):  # sorts all the students in the same school by points
+    for i in student.find({'school': school}).sort('points',
+                                                   -1):  # sorts all the students in the same school by points
         # Adds the items to list
         lbStudentName.append(str(i['first_name'] + " " + i["last_name"]))
         lbStudentGrade.append(str(i["grade"]))
@@ -84,24 +87,24 @@ def updatelb():
 # function to update the upcoming events
 def updateupcoming():
     from main import events
-    from login import email
+    from login import school
     global upcomingEventsFrame, event_holder, eventdate_holder, eventbd_holder, errorImage
     eventname = []  # initializes list for event name
     eventdate = []  # initializes list for event date
-    for i in events.find({'email': email}).sort('sortdate', -1):  # sorts all events by date
+    for i in events.find({'school': school}).sort('sortdate', 1):  # sorts all events by date
         eventname.append(i['event'])
         eventdate.append(i['date'])
     currentdate = date.today().strftime("%m/%d/%Y")  # gets today's date
     eventdate.append(currentdate)
-    eventdate.sort(key=lambda date: datetime.strptime(date, "%m/%d/%Y"), reverse=True)  # resorts the dates
+    eventdate.sort(key=lambda date: datetime.strptime(date, "%m/%d/%Y"), reverse=False)  # resorts the dates
     index = eventdate.index(currentdate)
     eventname.insert(index, 'space')
-    for i in range(len(eventdate)):  # Remove dates that already pasted today's date
-        if index < i:
-            eventdate.pop()
-    for i in range(len(eventname)):
-        if index < i:
-            eventname.pop()
+    for i in reversed(range(len(eventdate))):
+        if index > i:
+            del eventdate[i]
+    for i in reversed(range(len(eventname))):
+        if index > i:
+            del eventname[i]
     eventdate.remove(currentdate)  # Removes today's date
     eventname.remove('space')
     lenevent = 0
@@ -139,7 +142,12 @@ def updateupcoming():
         event_holder['event' + str(i)] = ctk.CTkLabel(eventbd_holder['bd' + str(i)], text=eventname[i],
                                                       font=("Courier New", 12), bg_color="transparent",
                                                       fg_color="transparent")
-        event_holder['event' + str(i)].place(x=15, rely=0.02)
+        if len(eventname[i]) >= 20:
+            event_holder['event' + str(i)].place(x=12, rely=0.02)
+        elif len(eventname[i]) >= 16:
+            event_holder['event' + str(i)].place(relx=0.2, rely=0.02)
+        else:
+            event_holder['event' + str(i)].place(relx=0.285, rely=0.02)
         eventdate_holder['date' + str(i)] = ctk.CTkLabel(eventbd_holder['bd' + str(i)], text=eventdate[i],
                                                          font=("Courier New", 14), bg_color="transparent",
                                                          fg_color="transparent")
@@ -154,10 +162,10 @@ def updateupcoming():
 
 # function to update the points
 def updatepoints():
-    from main import collection
+    from main import student
     from login import email
     global pointsLabel, pointsFrame
-    user = collection.find_one({'email': email})  # finds the user from the datebase based on email
+    user = student.find_one({'email': email})  # finds the user from the datebase based on email
     points = user['points']  # sets the user points to the variable points
     if points >= 1000:
         pointsFrame.configure(width=105)
@@ -171,34 +179,9 @@ def updatepoints():
 # function to switch to report page
 def reportPage(self, controller):
     from report import winners, reportPage, updateUserinfo
-    updateUserinfo()
+    updateUserinfo(False)
     winners()
     show_frame(self, controller, reportPage)
-
-
-# function to change password
-def changepass(self):
-    from main import collection
-    from login import email
-    self.errorMessage.configure(text_color="red")
-    if self.ogpassEntry.get() == "" or self.newpassEntry.get() == "" or self.newconpassEntry.get() == "":
-        self.errorMessage.place(relx=0.16)
-        return self.errorMessage.configure(text="Error: Fill All Fields")
-    if self.newpassEntry.get() != self.newconpassEntry.get():
-        self.errorMessage.place(relx=0)
-        return self.errorMessage.configure(text="Error: Passwords Don't Match", font=("", 11))
-    user = collection.find_one({"email": email})  # finds the user from the database from their email
-    ogpass = user['password']  # finds the user password from the datebase
-    if not self.ogpassEntry.get() == ogpass:
-        self.errorMessage.place(relx=0.07)
-        return self.errorMessage.configure(text="Error: Invalid Password")
-    self.errorMessage.configure(text="Successfully Reset Password", text_color="green", font=("", 11))
-    self.errorMessage.place(relx=0)
-    collection.find_one_and_update({'email': email},
-                                   {'$set': {"password": self.newconpassEntry.get()}})  # sets new password to datebase
-    self.ogpassEntry.delete(0, ctk.END)  # deletes entry
-    self.newpassEntry.delete(0, ctk.END)
-    self.newconpassEntry.delete(0, ctk.END)
 
 
 # function to logout and go back to the login screen
@@ -212,7 +195,7 @@ def logout(self, controller, para1):
 def menuOpen(self, para1):
     global openm
     if not openm:
-        self.settingFrame.place(relx=0.8)
+        self.settingFrame.place(relx=0.95)
         if para1:  # for
             self.menuButton.configure(fg_color="#212121", hover_color="#292929", bg_color="#212121")
             self.logoutButton.configure(fg_color="#212121", hover_color="#292929", bg_color="#212121")
@@ -230,15 +213,6 @@ def menuOpen(self, para1):
 # function to close the menu and clear entries
 def menuClose(self, para1):
     self.settingFrame.place(relx=1)
-    self.ogpassEntry.delete(0, ctk.END)
-    self.ogpassEntry.configure(show="\u2022")
-    self.newpassEntry.delete(0, ctk.END)
-    self.newpassEntry.configure(placeholder_text="new password")
-    self.newpassEntry.configure(show="\u2022")
-    self.newconpassEntry.delete(0, ctk.END)
-    self.newconpassEntry.configure(placeholder_text="confirm password")
-    self.newconpassEntry.configure(show="\u2022")
-    self.errorMessage.configure(text="")
     if para1:
         self.menuButton.configure(fg_color="#292929", hover_color="#212121", bg_color="#292929")
         self.logoutButton.configure(fg_color="#292929", hover_color="#212121", bg_color="#292929")
@@ -248,21 +222,26 @@ def menuClose(self, para1):
 
 
 # initializes frame and places widgets on the page
-class student(ctk.CTkFrame):
+class studentDashboard(ctk.CTkFrame):
     def __init__(self, parent, controller):
         global welcomeLabel, frame, pointsLabel, pointsFrame, upcomingEventsFrame, errorImage
         ctk.CTkFrame.__init__(self, parent)
+
+        # creating frames and borders around the screen
         frame = ctk.CTkFrame(self, width=800, height=500, fg_color="transparent")
         frame.place(relx=0, rely=0)
 
+        # placing logo
         self.mainImage = ctk.CTkImage(dark_image=Image.open(env.img[3]), light_image=Image.open(env.img[3]),
                                       size=(350, 350))
         self.imageLabel = ctk.CTkLabel(self, image=self.mainImage, text="")
         self.imageLabel.place(relx=0, rely=-0.05)
 
+        # Welcome label for students
         welcomeLabel = ctk.CTkLabel(self, text="Welcome", font=("courier new", 26))
         welcomeLabel.place(relx=0.055, rely=0.025)
 
+        # Points frame
         pointsFrame = ctk.CTkFrame(self, width=80, height=37, fg_color="transparent", border_color="#212121",
                                    border_width=2)
         pointsFrame.place(relx=0.809)
@@ -275,6 +254,7 @@ class student(ctk.CTkFrame):
         pointsLabel = ctk.CTkLabel(self, text="0", font=("courier new", 25))
         pointsLabel.place(relx=0.85, rely=0.0099)
 
+        # To add event page button
         self.plusImage = ctk.CTkImage(dark_image=Image.open(env.img[7]),
                                       light_image=Image.open(env.img[7]), size=(75, 75))
         self.eventsButton = ctk.CTkButton(self, image=self.plusImage, text="Events", width=15, height=50,
@@ -284,6 +264,7 @@ class student(ctk.CTkFrame):
                                           command=lambda: toaddEvents(self, controller))
         self.eventsButton.place(relx=0.085, rely=0.45)
 
+        # To report page button
         self.reportImage = ctk.CTkImage(dark_image=Image.open(env.img[10]), light_image=Image.open(env.img[10]),
                                         size=(20, 20))
         self.reportButton = ctk.CTkButton(self, image=self.reportImage, text="", width=35, height=35,
@@ -291,12 +272,14 @@ class student(ctk.CTkFrame):
                                           command=lambda: reportPage(self, controller))
         self.reportButton.place(relx=0.96, rely=0.64)
 
+        # adding leaderboard labels
         self.lbTitle = ctk.CTkLabel(self, text="Leaderboard", font=("Courier New", 28)).place(relx=0.55, rely=0.1)
 
         self.lbHeadings = ctk.CTkLabel(self, text="Name\t" + "      " + "Grade" + "    " + "Points",
                                        font=("courier new", 22))
         self.lbHeadings.place(relx=0.45, rely=0.2)
 
+        # Upcoming Events labels
         upcomingEventsFrame = ctk.CTkFrame(self, width=800, height=150, corner_radius=10, bg_color="#363636",
                                            fg_color="#363636")
         upcomingEventsFrame.place(relx=0, y=350)
@@ -306,45 +289,39 @@ class student(ctk.CTkFrame):
         self.upcomingTitle = ctk.CTkLabel(upcomingEventsFrame, text="Upcoming Events", font=("Courier New", 18)).place(
             relx=0.4, rely=0.05)
 
-        self.settingFrame = ctk.CTkCanvas(self, width=160, height=500, background="#212121", highlightthickness=0,
+        # initializes settings menu frame
+        self.settingFrame = ctk.CTkCanvas(self, width=100, height=500, background="#212121", highlightthickness=0,
                                           borderwidth=0)
 
-        self.labeltest = ctk.CTkLabel(self.settingFrame, text="Settings", font=("courier new", 15))
-        self.labeltest.place(relx=0.24, rely=0.12)
-
-        self.ogpassEntry = ctk.CTkEntry(self.settingFrame, placeholder_text="password", width=100, show="\u2022")
-        self.ogpassEntry.place(relx=0.16, rely=0.2)
-
-        self.newpassEntry = ctk.CTkEntry(self.settingFrame, placeholder_text="new password", width=100, show="\u2022")
-        self.newpassEntry.place(relx=0.16, rely=0.3)
-
-        self.newconpassEntry = ctk.CTkEntry(self.settingFrame, placeholder_text="confirm password", width=100,
-                                            show="\u2022")
-        self.newconpassEntry.place(relx=0.16, rely=0.4)
-
-        self.errorMessage = ctk.CTkLabel(self.settingFrame, text="", text_color="red")
-        self.errorMessage.place(relx=0.16, rely=0.46)
-
-        self.saveButton = ctk.CTkButton(self.settingFrame, text="Save", width=40, height=10, fg_color="#212121",
-                                        bg_color="#212121", hover_color="#212121", command=lambda: changepass(self))
-        self.saveButton.place(relx=0.34, rely=0.52)
-
-        self.helpImage = ctk.CTkImage(dark_image=Image.open(env.img[11]), light_image=Image.open(env.img[11]),
-                                      size=(20, 20))
-        self.helpButton = ctk.CTkButton(self.settingFrame, image=self.helpImage, text="", width=25, height=25,
-                                        fg_color="#212121", bg_color="#212121", hover_color="#292929",
-                                        command=lambda: show_frame(self, controller, helpPage))
-        self.helpButton.place(relx=0.79, rely=0.87)
-
+        # places menu button
         self.menuImage = ctk.CTkImage(dark_image=Image.open(env.img[6]),
                                       light_image=Image.open(env.img[6]), size=(25, 25))
         self.menuButton = ctk.CTkButton(self, image=self.menuImage, text="", width=15, height=25, fg_color="#292929",
+                                        bg_color="#292929",
                                         hover_color="#212121", command=lambda: menuOpen(self, True))
         self.menuButton.place(relx=0.95, rely=0)
 
+        # places account settings button
+
+        self.accountImage = ctk.CTkImage(dark_image=Image.open(env.img[12]), light_image=Image.open(env.img[12]),
+                                         size=(29, 29))
+        self.accountButton = ctk.CTkButton(self.settingFrame, image=self.accountImage, text="", width=25, height=25,
+                                           fg_color="#212121", bg_color="#212121", hover_color="#292929",
+                                           command=lambda: show_frame(self, controller, accountPage))
+        self.accountButton.place(relx=-0.015, rely=0.765)
+
+        # places help button
+        self.helpImage = ctk.CTkImage(dark_image=Image.open(env.img[11]), light_image=Image.open(env.img[11]),
+                                      size=(28, 28))
+        self.helpButton = ctk.CTkButton(self.settingFrame, image=self.helpImage, text="", width=25, height=25,
+                                        fg_color="#212121", bg_color="#212121", hover_color="#292929",
+                                        command=lambda: show_frame(self, controller, helpPage))
+        self.helpButton.place(relx=-0.015, rely=0.84)
+
+        # places log out button
         self.logoutImage = ctk.CTkImage(dark_image=Image.open(env.img[5]), light_image=Image.open(env.img[5]),
-                                        size=(25, 25))
-        self.logoutButton = ctk.CTkButton(self.settingFrame, image=self.logoutImage, text="", width=15, height=25,
+                                        size=(37, 37))
+        self.logoutButton = ctk.CTkButton(self.settingFrame, image=self.logoutImage, text="", width=15, height=50,
                                           fg_color="#212121", bg_color="#212121", hover_color="#292929",
-                                          command=lambda: logout(self, controller, True))
-        self.logoutButton.place(relx=0.78, rely=0.93)
+                                          command=lambda: logout(self, controller, False))
+        self.logoutButton.place(relx=-0.04, rely=0.91)

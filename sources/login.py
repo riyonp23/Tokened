@@ -12,7 +12,7 @@ import env
 from signup import signUpPage
 
 
-# shows the login page
+# Function to switch pages
 def show_frame(self, controller, page):
     frame = controller.frames[page]
     frame.tkraise()
@@ -36,7 +36,7 @@ regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'  # To check for v
 # allows users to reset password
 # composes email to reset
 def resetPassword(window):
-    from main import collection
+    from main import student, teacher
     if window.emailEntry.get() == "":
         window.info.configure(text="Error: Enter Email", text_color="red")
         window.info.place(relx=0.37)
@@ -53,7 +53,7 @@ def resetPassword(window):
     digits = string.digits
     alphabet = letters + digits
     pwd_length = 5
-    if not collection.find_one(get) is None:
+    if not student.find_one(get) is None:
         pwd = ''
         for i in range(pwd_length):
             pwd += ''.join(secrets.choice(alphabet))
@@ -67,10 +67,31 @@ def resetPassword(window):
         context = ssl.create_default_context()
 
         with smtplib.SMTP_SSL('smtp.gmail.com', 465, context=context) as smtp:
-            smtp.login("riyonpraveen23@gmail.com", "password")
+            smtp.login("riyonpraveen23@gmail.com", env.emailPass)
             smtp.sendmail("riyonpraveen23@gmail.com", str(resemail), em.as_string())
 
-        collection.update_one({"email": resemail}, {"$set": {"password": pwd}})
+        student.update_one({"email": resemail}, {"$set": {"password": pwd}})
+        window.info.configure(text="ⓘ Sent New Password To " + resemail, text_color="green")
+        window.restButton.configure(state="disabled")
+        return
+    elif not teacher.find_one(get) is None:
+        pwd = ''
+        for i in range(pwd_length):
+            pwd += ''.join(secrets.choice(alphabet))
+        em = EmailMessage()
+        em['From'] = "riyonpraveen23@gmail.com"
+        em['To'] = str(resemail)
+        em['Subject'] = "Tokened Password Reset"
+        content = "Your Temporary Tokened Password Is: " + pwd + "\nMake Sure to Change Your Password From The Account Settings Page"
+        em.set_content(content)
+
+        context = ssl.create_default_context()
+
+        with smtplib.SMTP_SSL('smtp.gmail.com', 465, context=context) as smtp:
+            smtp.login("riyonpraveen23@gmail.com", env.emailPass)
+            smtp.sendmail("riyonpraveen23@gmail.com", str(resemail), em.as_string())
+
+        teacher.update_one({"email": resemail}, {"$set": {"password": pwd}})
         window.info.configure(text="ⓘ Sent New Password To " + resemail, text_color="green")
         window.restButton.configure(state="disabled")
         return
@@ -80,7 +101,7 @@ def resetPassword(window):
         return
 
 
-# creates forgot password window to enter email.
+# creates forgot password window to enter email
 def forgotPassword(self):
     window = ctk.CTkToplevel(self)
     window.geometry("400x200")
@@ -101,21 +122,25 @@ def forgotPassword(self):
 
 # uses email to obtain information for the account
 def obtainUserinfo():
-    from main import collection
-    from student import changeText
+    from main import student, teacher
     global first_name, last_name, grade, school, email
     get = {"email": email}
-    user = collection.find_one(get)
+    user = None
+    if not student.find_one(get) is None:
+        user = student.find_one(get)
+    elif not teacher.find_one(get) is None:
+        user = teacher.find_one(get)
     first_name = user['first_name']
     last_name = user['last_name']
     grade = user['grade']
     school = user['school']
-    changeText()
 
 
+# Method to make login process and check for valid user information
 def loginSuccess(self, controller):
-    from main import collection
-    from student import student, updatelb, updatepoints, updateupcoming
+    from main import student, teacher
+    from student import studentDashboard, updatelb, updatepoints, updateupcoming, changeText
+    from teacher import teacherDashboard, changeTextT, updateeventsT, updateupcomingT
     global email, password
     self.errorMessage.place(relx=0.44)
     # error message if all text fields are not filled
@@ -133,13 +158,21 @@ def loginSuccess(self, controller):
     email = str(email2)
     password = str(password2)
     get = {"email": email2, "password": password2}
-    # obtains user info if login is succesful
-    if not collection.find_one(get) is None:
+    # obtains user info if login is successful
+    if not student.find_one(get) is None:  # checks if it's a student login
         obtainUserinfo()
+        changeText()
         updatelb()
         updatepoints()
         updateupcoming()
-        show_frame(self, controller, student)
+        show_frame(self, controller, studentDashboard)
+        return
+    elif not teacher.find_one(get) is None:  # checks if it's a teacher login
+        obtainUserinfo()
+        changeTextT()
+        updateeventsT()
+        updateupcomingT()
+        show_frame(self, controller, teacherDashboard)
         return
     # error message if password or email is incorrect
     else:

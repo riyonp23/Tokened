@@ -23,16 +23,43 @@ def show_frame(self, controller):
     self.conpasswordEntry.configure(placeholder_text="confirm password")
     self.schoolbox.set("school")
     self.gradebox.set("grade")
+    self.gradebox.configure(state="normal")
+    self.switchTeacher.deselect()
     self.passwordEntry.configure(show="\u2022")
     self.conpasswordEntry.configure(show="\u2022")
     self.errorMessage.configure(text="")
 
 
+# function to check if it is a teacher
+def checkTeacher(self):
+    status = self.switchTeacher.get()
+    if status:
+        self.errorMessage.configure(text="", text_color="red")
+        dialog = ctk.CTkInputDialog(text="Type in 4 Digit Code:",
+                                    title="Teacher Confirmation Check")  # Enter combination code
+        dialog.iconbitmap(env.img[2])
+        code = dialog.get_input()
+        if code == "0000":  # code for demo purpose is 0000, in real life situations it would be randomly generated
+            if not self.gradebox.get() == "Teacher":
+                self.gradebox.set("Teacher")
+                self.gradebox.configure(state="disabled")
+            self.errorMessage.place(relx=0.46)
+            self.errorMessage.configure(text="Success", text_color="green")
+            return
+        else:
+            self.errorMessage.place(relx=0.43)
+            self.errorMessage.configure(text="Error: Incorrect Code")
+            self.gradebox.set("grade")
+            self.gradebox.configure(state="normal")
+            self.switchTeacher.deselect()
+
+
 # function to create new user account and stores it in the database mongoDB
 def createAccount(self, controller):
-    from main import collection
+    from main import student, teacher
     from student import updatelb
     regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'  # To check for valid email
+    self.errorMessage.configure(text_color="red")
     self.errorMessage.place(relx=0.44)
     # Error messages response
     if self.emailEntry.get() == "" or self.passwordEntry.get() == "" or self.conpasswordEntry.get() == "" or self.schoolbox.get() == "school" or self.fnameEntry.get() == "" or self.lnameEntry.get() == "" or self.gradebox.get() == "grade":
@@ -54,7 +81,8 @@ def createAccount(self, controller):
     email = self.emailEntry.get()  # Gets user input from email  box
     password = self.conpasswordEntry.get()  # Gets user input from password box
     school = self.schoolbox.get()  # Gets user input from school box
-    if collection.find_one({"email": email}):  # checks to see if email is already in use in the database
+    if student.find_one({"email": email}) or teacher.find_one(
+            {"email": email}):  # checks to see if email is already in use in the database
         self.errorMessage.configure(text="Error: Email Already Inuse")
         self.errorMessage.place(relx=0.42)
         self.passwordEntry.delete(0, ctk.END)
@@ -65,9 +93,14 @@ def createAccount(self, controller):
     self.passwordEntry.delete(0, ctk.END)
     self.conpasswordEntry.delete(0, ctk.END)
     self.schoolbox.set("schools")
+    self.gradebox.set("grade")
+    self.switchTeacher.deselect()
     info = {"first_name": fName, "last_name": lName, "grade": grade, "email": email, "password": password,
             "school": school, "points": 0}  # Takes all the info and stores it in a dictionary
-    collection.insert_one(info)  # Inserts the new user into the database
+    if grade == "Teacher":  # checks to see if it's a teacher or student
+        teacher.insert_one(info)  # Inserts the new teacher into the database
+    else:
+        student.insert_one(info)  # Inserts the new student into the database
     updatelb()
     show_frame(self, controller)  # Switches to login page
 
@@ -77,11 +110,13 @@ class signUpPage(ctk.CTkFrame):
     def __init__(self, parent, controller):
         ctk.CTkFrame.__init__(self, parent)
 
+        # Places logo
         self.mainImage = ctk.CTkImage(dark_image=Image.open(env.img[3]), light_image=Image.open(env.img[3]),
                                       size=(350, 350))
         self.imageLabel = ctk.CTkLabel(self, image=self.mainImage, text="")
         self.imageLabel.place(relx=0.288, rely=-0.22)
 
+        # Places sign up entries and dropdowns
         self.fnameEntry = ctk.CTkEntry(self, placeholder_text="first name", width=80)
         self.fnameEntry.place(relx=0.38, rely=0.28)
 
@@ -104,7 +139,7 @@ class signUpPage(ctk.CTkFrame):
         self.conpasswordEntry.place(relx=0.38, rely=0.68)
 
         self.errorMessage = ctk.CTkLabel(self, text="", text_color="red")
-        self.errorMessage.place(relx=0.44, rely=0.84)
+        self.errorMessage.place(relx=0.44, rely=0.87)
 
         self.schoolbox = ctk.CTkOptionMenu(self, values=env.high_schools, width=200, dropdown_fg_color="#343638",
                                            bg_color="#343638", fg_color="#343638", button_color="#343638",
@@ -112,9 +147,13 @@ class signUpPage(ctk.CTkFrame):
         self.schoolbox.place(relx=0.38, rely=0.78)
         self.schoolbox.set("school")
 
+        self.switchTeacher = ctk.CTkSwitch(master=self, text="Teacher", onvalue=True, offvalue=False,
+                                           command=lambda: checkTeacher(self))
+        self.switchTeacher.place(relx=0.44, rely=0.84)
+
         self.createButton = ctk.CTkButton(self, text="Create", width=190, height=30,
                                           command=lambda: createAccount(self, controller))
-        self.createButton.place(relx=0.385, rely=0.9)
+        self.createButton.place(relx=0.385, rely=0.92)
 
         self.backIcon = ctk.CTkImage(dark_image=Image.open(env.img[0]), light_image=Image.open(env.img[0]),
                                      size=(25, 25))
