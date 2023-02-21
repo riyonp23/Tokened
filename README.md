@@ -12,7 +12,7 @@ Developers: [Riyon Praveen](https://github.com/skyy-rad), [Ignatius Martin](http
 * **SPACE:** 25 MB
 * **RAM:** 2 GB
 
-## **PLEASE NOTE**
+## ***PLEASE NOTE***
 * For demo purposes, the teacher confirmation code is `0000`
 * Make sure to use a valid email
 * **DO NOT USE YOUR REAL PASSWORD FOR PASSWORD**
