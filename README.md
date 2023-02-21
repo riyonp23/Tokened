@@ -15,7 +15,7 @@ Developers: [Riyon Praveen](https://github.com/skyy-rad), [Ignatius Martin](http
 ## **PLEASE NOTE**
 * For demo purposes, the teacher confirmation code is `0000`
 * Make sure to use a valid email
-* DO NOT USE YOUR REAL PASSWORD FOR PASSWORD
+* **DO NOT USE YOUR REAL PASSWORD FOR PASSWORD**
 
 ## Source Code
 Coded In [Python 3.10.1](https://github.com/skyy-rad/Tokened/tree/main/sources) (2000 Lines Of Code)
