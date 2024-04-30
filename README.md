@@ -1,5 +1,5 @@
 # Tokened <img style="float: right;" src="https://i.ibb.co/pWnYFZv/tokened-main-optimized-1-removebg-preview.png" alt="drawing" width="400"/>
-Developers: [Riyon Praveen](https://github.com/skyy-rad), [Ignatius Martin](https://github.com/iggym21), & [Anay Patel](https://github.com/Perefo)
+Developers: [Riyon Praveen](https://github.com/skyy-rad)
 
 ## How It Works
 * Download as ZIP (MAKE SURE TO HAVE ASSETS FOLDER IN THE SAME FOLDER AS THE EXE)
